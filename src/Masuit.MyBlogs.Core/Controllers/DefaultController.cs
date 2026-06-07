@@ -44,7 +44,7 @@ public sealed class DefaultController(IRedisClient redis) : Controller
                 }
 
                 await Response.WriteAsync("event: message\n", cancellationToken);
-                await Response.WriteAsync("data:" + DateTime.Now.GetTotalMilliseconds() + "\r\r", cancellationToken: cancellationToken);
+                await Response.WriteAsync("data:" + DateTime.UtcNow.GetTotalMilliseconds() + "\r\r", cancellationToken: cancellationToken);
                 await Response.Body.FlushAsync(cancellationToken);
                 await Task.Delay(2000, cancellationToken);
             }

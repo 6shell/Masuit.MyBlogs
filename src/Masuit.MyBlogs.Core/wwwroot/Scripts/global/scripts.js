@@ -106,7 +106,7 @@ $(function () {
 
     window.eventSource = new EventSource(`/ping`)
     window.eventSource.onmessage = (event) => {
-      $("#ping").text((Date.now() - event.data) / 2 % 1000);
+      $("#ping").text((Date.now() - event.data));
     }
 
     window.eventSource.onerror = (error) => {
