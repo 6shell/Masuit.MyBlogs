@@ -207,7 +207,7 @@ public sealed class PostController : BaseController
         posts[1].ModifyDate = posts[1].ModifyDate.ToTimeZone(HttpContext.Session.Get<string>(SessionKey.TimeZone));
         ViewBag.Ads = AdsService.GetsByWeightedPrice(2, AdvertiseType.InPage, Request.Location(), main.CategoryId, main.Label);
         ViewBag.DisableCopy = post.DisableCopy;
-        return View(posts);
+        return View(new[] { posts[0], posts[2], posts[1] });
     }
 
     /// <summary>
