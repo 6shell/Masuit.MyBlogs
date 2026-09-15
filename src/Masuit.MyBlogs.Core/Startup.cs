@@ -17,7 +17,6 @@ using Masuit.Tools.Config;
 using Masuit.Tools.Core.AspNetCore;
 using Microsoft.Extensions.Primitives;
 using Newtonsoft.Json;
-using SixLabors.ImageSharp.Web.DependencyInjection;
 using System.Text.RegularExpressions;
 using Masuit.Tools.AspNetCore.ModelBinder;
 using EFCoreSecondLevelCacheInterceptor;
@@ -115,7 +114,6 @@ public class Startup
         services.AddRazorPages();
         services.AddServerSideBlazor();
         services.AddMyMvc().AddHealthChecks();
-        services.SetupImageSharp();
         services.AddHttpContextAccessor();
         services.AddReverseProxy().LoadFromConfig(Configuration.GetSection("ReverseProxy")).ConfigureHttpClient((context, handler) =>
         {
@@ -160,7 +158,7 @@ public class Startup
         }
         app.UseBundles();
         app.SetupHttpsRedirection(Configuration);
-        app.UseDefaultFiles().UseWhen(c => Regex.IsMatch(c.Request.Path.Value + "", @"(\.jpg|\.jpeg|\.png|\.bmp|\.webp|\.tiff|\.pbm)$", RegexOptions.IgnoreCase), builder => builder.UseImageSharp()).UseStaticFiles();
+        app.UseDefaultFiles().UseStaticFiles();
         app.UseSession().UseCookiePolicy(); //注入Session
         app.UseWhen(c => c.Session.Get<UserInfoDto>(SessionKey.UserInfo)?.IsAdmin == true, builder =>
         {

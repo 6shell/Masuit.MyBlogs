@@ -5,6 +5,7 @@ using FreeRedis;
 using Hangfire;
 using Masuit.MyBlogs.Core.Configs;
 using Masuit.MyBlogs.Core.Extensions.Hangfire;
+using Masuit.Tools.Extension.Object;
 using Microsoft.Net.Http.Headers;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 

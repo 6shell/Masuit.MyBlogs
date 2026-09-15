@@ -3,6 +3,7 @@ using Masuit.Tools.Logging;
 using Polly;
 using System.Text;
 using Dispose.Scope;
+using Masuit.Tools.Extension.Object;
 using Masuit.Tools.Mime;
 
 namespace Masuit.MyBlogs.Core.Controllers;

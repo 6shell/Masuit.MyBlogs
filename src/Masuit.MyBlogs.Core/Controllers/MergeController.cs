@@ -67,7 +67,7 @@ public sealed class MergeController : AdminController
     {
         var newer = await PostMergeRequestService.GetByIdAsync(mid) ?? throw new NotFoundException("待合并文章未找到");
         var old = newer.Post;
-        (old.Content, newer.Content) = old.Content.HtmlDiff(newer.Content);
+        (old.Content, newer.Content) = old.Content.HtmlDiff(newer.Content,5);
         return ResultData(new { old = old.ToDto(), newer = newer.ToDto() });
     }
 

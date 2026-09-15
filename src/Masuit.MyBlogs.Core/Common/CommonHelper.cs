@@ -10,8 +10,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using Newtonsoft.Json;
-using SixLabors.ImageSharp;
-using SixLabors.ImageSharp.Formats.Webp;
+using SkiaSharp;
 using TimeZoneConverter;
 using ArgumentException = System.ArgumentException;
 using Configuration = AngleSharp.Configuration;
@@ -333,7 +332,7 @@ namespace Masuit.MyBlogs.Core.Common
             {
                 try
                 {
-                    var watermarker = new ImageWatermarker(stream, new WebpEncoder())
+                    var watermarker = new ImageWatermarker(stream, new SkiaEncoder() { Format = SKEncodedImageFormat.Webp,Quality = 100})
                     {
                         SkipWatermarkForSmallImages = true,
                         SmallImagePixelsThreshold = 90000
@@ -343,7 +342,7 @@ namespace Masuit.MyBlogs.Core.Common
                     {
                         case "Text":
                             var watermarkText = SystemSettings["Watermark"];
-                            return watermarker.AddWatermark(watermarkText, AppContext.BaseDirectory + "App_Data/华康勘亭流.ttf", 20, Color.LightGray.WithAlpha(0.5f), position, 30);
+                            return watermarker.AddWatermark(watermarkText, AppContext.BaseDirectory + "App_Data/华康勘亭流.ttf", 20, SKColors.LightGray.WithAlpha(128), position, 30);
 
                         case "Image":
                             {

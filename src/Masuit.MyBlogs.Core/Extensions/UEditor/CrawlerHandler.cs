@@ -1,9 +1,11 @@
 ﻿using Masuit.Tools.Mime;
 using System.Net;
 using System.Text.RegularExpressions;
+using Masuit.Tools.Extension.Object;
 using Masuit.Tools.Files;
+using Masuit.Tools.Files.FileDetector;
 using Polly;
-using SixLabors.ImageSharp;
+using SkiaSharp;
 
 namespace Masuit.MyBlogs.Core.Extensions.UEditor;
 
@@ -87,15 +89,18 @@ public class Crawler(string sourceUrl, HttpClient httpClient, IConfiguration con
             return this;
         }
 
-        var format = await Image.DetectFormatAsync(stream, token).ContinueWith(t => t.IsCompletedSuccessfully ? t.Result : null);
+        var format = stream.DetectFiletype();
         stream.Position = 0;
         if (format != null)
         {
-            ServerUrl = ServerUrl.Replace(Path.GetExtension(ServerUrl), "." + format.Name.ToLower());
-            if (!Regex.IsMatch(format.Name, "JPEG|PNG|Webp|GIF", RegexOptions.IgnoreCase))
+            ServerUrl = ServerUrl.Replace(Path.GetExtension(ServerUrl), "." + format.Extension);
+            if (!Regex.IsMatch(format.Extension, "JPEG|PNG|Webp|GIF", RegexOptions.IgnoreCase))
             {
-                using var image = await Image.LoadAsync(stream, token);
-                await image.SaveAsJpegAsync(stream, token);
+                using var codec = SKCodec.Create(stream);
+                using var bmp = SKBitmap.Decode(codec);
+                var image = SKImage.FromBitmap(bmp);
+                var skData = image.Encode(SKEncodedImageFormat.Jpeg, 100);
+                skData.SaveTo(stream);
                 ServerUrl = ServerUrl.Replace(Path.GetExtension(ServerUrl), ".jpg");
             }
         }

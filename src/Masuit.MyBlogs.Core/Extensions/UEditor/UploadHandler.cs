@@ -1,7 +1,9 @@
-﻿using Masuit.Tools.Logging;
+﻿using Masuit.Tools.Files.FileDetector;
+using Masuit.Tools.Logging;
+using SkiaSharp;
 using System.Diagnostics;
 using System.Text.RegularExpressions;
-using SixLabors.ImageSharp;
+using Masuit.Tools.Files;
 
 namespace Masuit.MyBlogs.Core.Extensions.UEditor;
 
@@ -41,14 +43,15 @@ public class UploadHandler(HttpContext context, UploadConfig config) : Handler(c
             try
             {
                 var stream2 = stream.AddWatermark();
-                var format = await Image.DetectFormatAsync(stream2, cts.Token).ContinueWith(t => t.IsCompletedSuccessfully ? t.Result : null);
+                var format = stream2.DetectFiletype();
                 stream2.Position = 0;
-                if (format != null && !Regex.IsMatch(format.Name, "JPEG|PNG|Webp|GIF", RegexOptions.IgnoreCase))
+                if (format != null && !Regex.IsMatch(format.Extension, "JPEG|PNG|Webp|GIF", RegexOptions.IgnoreCase))
                 {
-                    using var image = await Image.LoadAsync(stream2, cts.Token);
                     var memoryStream = new PooledMemoryStream();
-                    await image.SaveAsJpegAsync(memoryStream, cancellationToken: cts.Token);
-                    await stream2.DisposeAsync();
+                    using var bmp = SKBitmap.Decode(stream2);
+                    using var image = SKImage.FromBitmap(bmp);
+                    using var skData = image.Encode(SKEncodedImageFormat.Jpeg, 100);
+                    skData.SaveTo(memoryStream);
                     stream2 = memoryStream;
                     savePath = savePath.Replace(Path.GetExtension(savePath), ".jpg");
                 }
@@ -62,7 +65,7 @@ public class UploadHandler(HttpContext context, UploadConfig config) : Handler(c
                 else
                 {
                     Directory.CreateDirectory(Path.GetDirectoryName(localPath));
-                    await File.WriteAllBytesAsync(localPath, await stream2.ToArrayAsync(cancellationToken: cts.Token), cts.Token);
+                    await stream2.SaveFileAsync(localPath);
                     Result.Url = savePath;
                 }
 

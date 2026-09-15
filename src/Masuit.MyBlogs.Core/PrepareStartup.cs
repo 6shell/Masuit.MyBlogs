@@ -4,25 +4,17 @@ using Masuit.LuceneEFCore.SearchEngine;
 using Masuit.MyBlogs.Core.Configs;
 using Masuit.MyBlogs.Core.Extensions.Hangfire;
 using Masuit.Tools.Mime;
-using Masuit.Tools.Win32;
 using Microsoft.AspNetCore.Http.Features;
 using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Rewrite;
 using Microsoft.AspNetCore.StaticFiles;
-using Microsoft.IO;
 using Microsoft.Net.Http.Headers;
 using Polly;
-using SixLabors.ImageSharp.Web.Caching;
-using SixLabors.ImageSharp.Web.Commands;
-using SixLabors.ImageSharp.Web.DependencyInjection;
-using SixLabors.ImageSharp.Web.Processors;
-using SixLabors.ImageSharp.Web.Providers;
 using StackExchange.Profiling;
 using System.Net;
 using System.Text.RegularExpressions;
 using System.Web;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
-using Windows = Masuit.Tools.Win32.Windows;
 
 namespace Masuit.MyBlogs.Core
 {
@@ -182,40 +174,24 @@ namespace Masuit.MyBlogs.Core
             return services;
         }
 
-        public static IServiceCollection SetupImageSharp(this IServiceCollection services)
-        {
-            services.AddImageSharp(options =>
-            {
-                options.MemoryStreamManager = new RecyclableMemoryStreamManager();
-                options.BrowserMaxAge = TimeSpan.FromDays(7);
-                options.CacheMaxAge = TimeSpan.FromDays(365);
-                options.Configuration = SixLabors.ImageSharp.Configuration.Default;
-            }).SetRequestParser<QueryCollectionRequestParser>().Configure<PhysicalFileSystemCacheOptions>(options =>
-            {
-                options.CacheRootPath = null;
-                options.CacheFolder = "static/image_cache";
-            }).SetCache<PhysicalFileSystemCache>().SetCacheKey<UriRelativeLowerInvariantCacheKey>().SetCacheHash<SHA256CacheHash>().Configure<PhysicalFileSystemProviderOptions>(options => options.ProviderRootPath = null).AddProvider<PhysicalFileSystemProvider>().AddProcessor<ResizeWebProcessor>().AddProcessor<FormatWebProcessor>().AddProcessor<BackgroundColorWebProcessor>().AddProcessor<QualityWebProcessor>().AddProcessor<AutoOrientWebProcessor>();
-            return services;
-        }
-    }
-
-    /// <summary>
-    /// hangfire授权拦截器
-    /// </summary>
-    public class MyRestrictiveAuthorizationFilter : IDashboardAuthorizationFilter
-    {
         /// <summary>
-        /// 授权校验
+        /// hangfire授权拦截器
         /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        public bool Authorize(DashboardContext context)
+        public class MyRestrictiveAuthorizationFilter : IDashboardAuthorizationFilter
         {
+            /// <summary>
+            /// 授权校验
+            /// </summary>
+            /// <param name="context"></param>
+            /// <returns></returns>
+            public bool Authorize(DashboardContext context)
+            {
 #if DEBUG
-            return true;
+                return true;
 #endif
-            var user = context.GetHttpContext().Session.Get<UserInfoDto>(SessionKey.UserInfo) ?? new UserInfoDto();
-            return user.IsAdmin;
+                var user = context.GetHttpContext().Session.Get<UserInfoDto>(SessionKey.UserInfo) ?? new UserInfoDto();
+                return user.IsAdmin;
+            }
         }
     }
 }

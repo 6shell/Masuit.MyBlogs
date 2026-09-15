@@ -11,9 +11,8 @@
     //取第一张图片
     string imgSrc = Model.Content.MatchFirstImgSrc();
     if (!string.IsNullOrEmpty(imgSrc)) {
-      imgSrc += "?width=240&format=webp&quality=50";
       <div class="cover">
-        <img alt="@Model.Title" class="lazyload thumb" data-src="@imgSrc?width=240&format=webp&quality=50" decoding="async" loading="lazy" title="@Model.Title">
+        <img alt="@Model.Title" class="lazyload thumb" data-src="@imgSrc" decoding="async" loading="lazy" title="@Model.Title">
       </div>
     }
   }

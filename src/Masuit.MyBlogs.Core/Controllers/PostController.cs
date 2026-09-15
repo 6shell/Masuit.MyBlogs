@@ -26,6 +26,7 @@ using System.Linq.Dynamic.Core;
 using System.Net;
 using System.Text;
 using System.Text.RegularExpressions;
+using Masuit.Tools.Extension.Object;
 using SameSiteMode = Microsoft.AspNetCore.Http.SameSiteMode;
 
 namespace Masuit.MyBlogs.Core.Controllers;
@@ -199,7 +200,7 @@ public sealed class PostController : BaseController
         left.Id = main.Id;
         right.Id = main.Id;
         var posts = new[] { main, left, right }.OrderByDescending(v => v.ModifyDate).ToArray();
-        var (html2, html1) = posts[2].Content.HtmlDiff(posts[1].Content);
+        var (html2, html1) = posts[2].Content.HtmlDiff(posts[1].Content,5);
         posts[2].Content = await ReplaceVariables(html2).Next(s => CurrentUser.IsAdmin || Request.IsRobot() ? Task.FromResult(s) : s.InjectFingerprint(ClientIP.ToString()));
         posts[2].ModifyDate = posts[2].ModifyDate.ToTimeZone(HttpContext.Session.Get<string>(SessionKey.TimeZone));
         posts[1].Content = await ReplaceVariables(html1).Next(s => CurrentUser.IsAdmin || Request.IsRobot() ? Task.FromResult(s) : s.InjectFingerprint(ClientIP.ToString()));
@@ -505,7 +506,7 @@ public sealed class PostController : BaseController
             Link = "#/merge/compare?id=" + merge.Id
         });
 
-        var diff = post.Content.RemoveHtmlTag().HtmlDiffMerge(dto.Content.RemoveHtmlTag());
+        var diff = post.Content.RemoveHtmlTag().HtmlDiffMerge(dto.Content.RemoveHtmlTag(),5);
         var content = new Template(await new FileInfo(HostEnvironment.WebRootPath + "/template/merge-request.html").ShareReadWrite().ReadAllTextAsync(Encoding.UTF8))
             .Set("title", post.Title)
             .Set("link", Url.Action("Index", "Dashboard", new { }, Request.Scheme) + "#/merge/compare?id=" + merge.Id)
