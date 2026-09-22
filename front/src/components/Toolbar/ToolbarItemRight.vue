@@ -80,7 +80,7 @@
     <q-badge color="red" floating>{{ internalMsgs.length }}</q-badge>
     <q-tooltip>未读消息</q-tooltip>
     <q-menu class="pending-menu">
-      <div class="q-pa-md" style="min-width: 350px">
+      <div class="q-pa-md" style="min-width: 350px;overflow: hidden;">
         <div class="row items-center q-mb-sm">
           <div class="text-subtitle2">未读消息</div>
           <q-space />
@@ -615,12 +615,12 @@ onUnmounted(() => {
 </script>
 <style scoped>
 .pending-menu {
-  max-height: 400px;
+  /* max-height: 400px; */
   overflow-y: auto;
 }
 
 .pending-menu .q-list {
-  max-height: 300px;
+  max-height: 400px;
   overflow-y: auto;
 }
 
