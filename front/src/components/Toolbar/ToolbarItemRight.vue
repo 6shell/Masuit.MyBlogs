@@ -16,8 +16,8 @@
   <q-btn round dense flat icon="library_music" v-if="pendingPosts.length > 0">
     <q-badge color="red" floating>{{ pendingPosts.length }}</q-badge>
     <q-tooltip>待审核文章</q-tooltip>
-    <q-menu class="pending-menu">
-      <div class="q-pa-md" style="min-width: 300px">
+    <q-menu class="pending-menu" style="overflow: hidden;">
+      <div class="q-pa-md" style="min-width: 300px;overflow: hidden;">
         <div class="text-subtitle2 q-mb-sm">待审核文章</div>
         <q-list separator>
           <q-item v-for="post in pendingPosts" :key="post.Id" clickable :href="`${globalConfig.baseURL}/${post.Id}`" class="q-py-sm" target="_blank">
@@ -37,8 +37,8 @@
   <q-btn round dense flat icon="comment" v-if="pendingComments.length > 0">
     <q-badge color="red" floating>{{ pendingComments.length }}</q-badge>
     <q-tooltip>待审核评论</q-tooltip>
-    <q-menu class="pending-menu">
-      <div class="q-pa-md" style="min-width: 300px">
+    <q-menu class="pending-menu" style="overflow: hidden;">
+      <div class="q-pa-md" style="min-width: 300px;overflow: hidden;">
         <div class="text-subtitle2 q-mb-sm">待审核评论</div>
         <q-list separator>
           <q-item v-for="comment in pendingComments" :key="comment.Id" clickable :href="`${globalConfig.baseURL}/${comment.PostId}?cid=${comment.Id}#comment`" target="_blank" class="q-py-sm">
@@ -58,8 +58,8 @@
   <q-btn round dense flat icon="message" v-if="pendingMessages.length > 0">
     <q-badge color="red" floating>{{ pendingMessages.length }}</q-badge>
     <q-tooltip>待审核留言</q-tooltip>
-    <q-menu class="pending-menu">
-      <div class="q-pa-md" style="min-width: 300px">
+    <q-menu class="pending-menu" style="overflow: hidden;">
+      <div class="q-pa-md" style="min-width: 300px;overflow: hidden;">
         <div class="text-subtitle2 q-mb-sm">待审核留言</div>
         <q-list separator>
           <q-item v-for="message in pendingMessages" :key="message.Id" clickable :href="`${globalConfig.baseURL}/msg?cid=${message.Id}`" target="_blank" class="q-py-sm">
@@ -79,7 +79,7 @@
   <q-btn round dense flat icon="notifications" v-if="internalMsgs.length > 0">
     <q-badge color="red" floating>{{ internalMsgs.length }}</q-badge>
     <q-tooltip>未读消息</q-tooltip>
-    <q-menu class="pending-menu">
+    <q-menu class="pending-menu" style="overflow: hidden;">
       <div class="q-pa-md" style="min-width: 350px;overflow: hidden;">
         <div class="row items-center q-mb-sm">
           <div class="text-subtitle2">未读消息</div>
